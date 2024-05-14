@@ -1,5 +1,5 @@
 //
-//  NetworkServiceTests.swift
+//  MoviesViewModelTests.swift
 //  TrendingMovies
 //
 //  Created by Dhaker Trimech on 14/05/2024.
@@ -9,18 +9,21 @@ import XCTest
 import Combine
 @testable import TrendingMovies
 
-class NetworkServiceTests: XCTestCase {
+class MoviesViewModelTests: XCTestCase {
     
+    var viewModel: MoviesViewModel!
     var mockNetworkService: MockNetworkService!
     var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
         super.setUp()
         mockNetworkService = MockNetworkService()
+        viewModel = MoviesViewModel(networkService: mockNetworkService)
         cancellables = []
     }
     
     override func tearDown() {
+        viewModel = nil
         mockNetworkService = nil
         cancellables = nil
         super.tearDown()
@@ -28,23 +31,22 @@ class NetworkServiceTests: XCTestCase {
     
     func testFetchTrendingMoviesSuccess() {
         // Given
-        let movies = [TrendingMovie(id: 1, title: "Mock Movie 1", posterPath: "/mockPoster1.jpg"),
-                      TrendingMovie(id: 2, title: "Mock Movie 2", posterPath: "/mockPoster2.jpg")]
+        let movies = [TrendingMovie(id: 1, title: "Movie 1", posterPath: "/path1"),
+                      TrendingMovie(id: 2, title: "Movie 2", posterPath: "/path2")]
         mockNetworkService.trendingMovies = movies
         
         // When
         let expectation = XCTestExpectation(description: "Fetch trending movies")
-        mockNetworkService.fetchTrendingMovies()
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    XCTFail("Error: \(error.localizedDescription)")
-                }
-            }, receiveValue: { receivedMovies in
+        viewModel.$trendingMovies
+            .dropFirst()
+            .sink { trendingMovies in
                 // Then
-                XCTAssertEqual(receivedMovies, movies)
+                XCTAssertEqual(trendingMovies, movies)
                 expectation.fulfill()
-            })
+            }
             .store(in: &cancellables)
+        
+        viewModel.fetchTrendingMovies()
         
         wait(for: [expectation], timeout: 1.0)
     }
@@ -56,38 +58,37 @@ class NetworkServiceTests: XCTestCase {
         
         // When
         let expectation = XCTestExpectation(description: "Fetch trending movies failure")
-        mockNetworkService.fetchTrendingMovies()
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    XCTAssertEqual((error as? URLError)?.code, .badServerResponse)
-                    expectation.fulfill()
-                }
-            }, receiveValue: { _ in
-                XCTFail("Expected failure, but got success")
-            })
+        viewModel.$errorMessage
+            .dropFirst()
+            .sink { errorMessage in
+                // Then
+                XCTAssertEqual(errorMessage, "fetch_trending_movies_error".localized + error.localizedDescription)
+                expectation.fulfill()
+            }
             .store(in: &cancellables)
+        
+        viewModel.fetchTrendingMovies()
         
         wait(for: [expectation], timeout: 1.0)
     }
     
     func testFetchMovieDetailsSuccess() {
         // Given
-        let movieDetail = MovieDetail(id: 1, title: "Mock Movie 1", overview: "Mock overview", posterPath: "/mockPoster1.jpg")
+        let movieDetail = MovieDetail(id: 1, title: "Movie 1", overview: "Overview 1", posterPath: "/path1")
         mockNetworkService.movieDetail = movieDetail
         
         // When
         let expectation = XCTestExpectation(description: "Fetch movie details")
-        mockNetworkService.fetchMovieDetails(movieId: 1)
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    XCTFail("Error: \(error.localizedDescription)")
-                }
-            }, receiveValue: { receivedMovieDetail in
+        viewModel.$movieDetails
+            .dropFirst()
+            .sink { movieDetails in
                 // Then
-                XCTAssertEqual(receivedMovieDetail, movieDetail)
+                XCTAssertEqual(movieDetails, movieDetail)
                 expectation.fulfill()
-            })
+            }
             .store(in: &cancellables)
+        
+        viewModel.fetchMovieDetails(movieId: 1)
         
         wait(for: [expectation], timeout: 1.0)
     }
@@ -99,18 +100,17 @@ class NetworkServiceTests: XCTestCase {
         
         // When
         let expectation = XCTestExpectation(description: "Fetch movie details failure")
-        mockNetworkService.fetchMovieDetails(movieId: 1)
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    XCTAssertEqual((error as? URLError)?.code, .badServerResponse)
-                    expectation.fulfill()
-                }
-            }, receiveValue: { _ in
-                XCTFail("Expected failure, but got success")
-            })
+        viewModel.$errorMessage
+            .dropFirst()
+            .sink { errorMessage in
+                // Then
+                XCTAssertEqual(errorMessage, "fetch_movie_details_error".localized + error.localizedDescription)
+                expectation.fulfill()
+            }
             .store(in: &cancellables)
+        
+        viewModel.fetchMovieDetails(movieId: 1)
         
         wait(for: [expectation], timeout: 1.0)
     }
 }
-

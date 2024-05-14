@@ -11,36 +11,28 @@ import Combine
 
 class MockNetworkService: NetworkServiceProtocol {
     
-    var shouldReturnError = false
-    
-    // Mock data for trending movies
-    private let mockTrendingMovies: [TrendingMovie] = [
-        TrendingMovie(id: 1, title: "Mock Movie 1", posterPath: "/mockPoster1.jpg"),
-        TrendingMovie(id: 2, title: "Mock Movie 2", posterPath: "/mockPoster2.jpg")
-    ]
-    
-    // Mock data for movie details
-    private let mockMovieDetail = MovieDetail(id: 1, title: "Mock Movie 1", overview: "Mock overview", posterPath: "/mockPoster1.jpg")
+    var trendingMovies: [TrendingMovie]?
+    var movieDetail: MovieDetail?
+    var error: Error?
     
     func fetchTrendingMovies() -> AnyPublisher<[TrendingMovie], Error> {
-        if shouldReturnError {
-            return Fail(error: URLError(.badServerResponse))
-                .eraseToAnyPublisher()
+        if let error = error {
+            return Fail(error: error).eraseToAnyPublisher()
         } else {
-            return Just(mockTrendingMovies)
+            return Just(trendingMovies ?? [])
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
     }
     
     func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieDetail, Error> {
-        if shouldReturnError {
-            return Fail(error: URLError(.badServerResponse))
-                .eraseToAnyPublisher()
+        if let error = error {
+            return Fail(error: error).eraseToAnyPublisher()
         } else {
-            return Just(mockMovieDetail)
+            return Just(movieDetail ?? MovieDetail(id: 0, title: "", overview: "", posterPath: nil))
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
     }
 }
+

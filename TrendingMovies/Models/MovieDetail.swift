@@ -8,17 +8,21 @@
 import Foundation
 
 /// Model representing detailed information about a movie
-struct MovieDetail: Codable {
+struct MovieDetail: Codable, Equatable {
     let id: Int
     let title: String
     let overview: String
     let posterPath: String?
-    
+
     // Coding keys to map JSON keys to Swift property names
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case overview
         case posterPath = "poster_path"
+    }
+
+    static func == (lhs: MovieDetail, rhs: MovieDetail) -> Bool {
+        return lhs.id == rhs.id && lhs.title == rhs.title && lhs.overview == rhs.overview && lhs.posterPath == rhs.posterPath
     }
 }
