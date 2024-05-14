@@ -7,23 +7,38 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct MoviesListView: View {
     @ObservedObject var viewModel: MoviesViewModel
     @EnvironmentObject var coordinator: MoviesCoordinator
 
     var body: some View {
         NavigationView {
-            List(viewModel.trendingMovies, id: \.id) { movie in
-                VStack(alignment: .leading) {
-                    Text(movie.title)
-                        .font(.headline)
-                    if let posterPath = movie.posterPath {
-                        AsyncImageView(url: URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)!)
-                            .frame(width: 100, height: 150)
+            VStack {
+                if viewModel.isLoading {
+                    ProgressView("Loading...".localized)
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                } else {
+                    List(viewModel.trendingMovies, id: \.id) { movie in
+                        VStack(alignment: .leading) {
+                            Text(movie.title)
+                                .font(.headline)
+                            if let posterPath = movie.posterPath {
+                                AsyncImageView(url: URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)!)
+                                    .frame(width: 100, height: 150)
+                            } else {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .frame(width: 100, height: 150)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .onTapGesture {
+                            coordinator.showMovieDetails(movieId: movie.id)
+                        }
                     }
-                }
-                .onTapGesture {
-                    coordinator.showMovieDetails(movieId: movie.id)
                 }
             }
             .navigationTitle("trending_movies".localized)

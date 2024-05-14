@@ -14,7 +14,11 @@ struct MovieDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if let movie = viewModel.movieDetails {
+            if viewModel.isLoading {
+                ProgressView("Loading...".localized)
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .padding()
+            } else if let movie = viewModel.movieDetails {
                 Text(movie.title)
                     .font(.largeTitle)
                     .bold()
@@ -25,7 +29,7 @@ struct MovieDetailView: View {
                 Text(movie.overview)
                     .font(.body)
             } else {
-                Text("Loading...".localized)
+                Text("No details available.".localized)
                     .font(.body)
             }
         }
@@ -42,3 +46,4 @@ struct MovieDetailView_Previews: PreviewProvider {
         MovieDetailView(viewModel: MoviesViewModel(), movieId: 0)
     }
 }
+
