@@ -5,7 +5,6 @@
 //  Created by Dhaker Trimech on 14/05/2024.
 //
 
-import Foundation
 import SwiftUI
 
 struct MovieDetailView: View {
@@ -19,22 +18,32 @@ struct MovieDetailView: View {
                     .progressViewStyle(CircularProgressViewStyle())
                     .padding()
             } else if let movie = viewModel.movieDetails {
-                Text(movie.title)
-                    .font(.largeTitle)
-                    .bold()
-                if let posterPath = movie.posterPath {
-                    AsyncImageView(url: URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)!)
-                        .frame(width: 200, height: 300)
+                ScrollView {
+                    VStack(alignment: .center, spacing: 16) {
+                        if let posterPath = movie.posterPath {
+                            AsyncImageView(url: URL(string: Constants.Image.baseURL + posterPath)!)
+                                .frame(width: 200, height: 300)
+                                .cornerRadius(8)
+                                .shadow(radius: 10)
+                                .padding(.top)
+                        }
+                        Text(movie.releaseDate?.formattedYear ?? "")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Text(movie.overview)
+                            .font(.body)
+                            .padding(.horizontal)
+                    }
+                    .padding(.bottom)
                 }
-                Text(movie.overview)
-                    .font(.body)
+                .navigationTitle(movie.title)
+                .navigationBarTitleDisplayMode(.inline)
             } else {
                 Text("No details available.".localized)
                     .font(.body)
+                    .padding()
             }
         }
-        .padding()
-        .navigationTitle("Movie Details".localized)
         .onAppear {
             viewModel.fetchMovieDetails(movieId: movieId)
         }
@@ -46,4 +55,3 @@ struct MovieDetailView_Previews: PreviewProvider {
         MovieDetailView(viewModel: MoviesViewModel(), movieId: 0)
     }
 }
-

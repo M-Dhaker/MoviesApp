@@ -3,23 +3,31 @@ MoviesApp is a simple iOS application that displays a list of trending movies an
 
 ## Features
 
-- Display a list of trending movies.
-- View detailed information about a selected movie.
-- Asynchronous data fetching with Combine.
-- Localized for multiple languages.
+- Display a list of trending movies
+- View detailed information about a selected movie
+- Pagination support to load more movies as the user scrolls
+- Localized strings for multiple languages
+- Async image loading with placeholder
+- Centralized configuration for URLs and API keys
 
-## Requirements
+## Architecture
 
-- iOS 14.0+
-- Xcode 12.0+
-- Swift 5.3+
+The app follows the MVVM-C (Model-View-ViewModel-Coordinator) architecture pattern using SwiftUI and Combine.
 
-## Installation
+## Setup
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/MoviesApp.git
+1. Clone the repository
+2. Open `TrendingMovies.xcodeproj` in Xcode
+3. Build and run the app on a simulator or device
 
-2. Open the project in Xcode
-   
-3. Build and run the project on your simulator or device from Xcode.
+## Configuration
+
+The URLs and API keys are stored in `Constants.swift` for easy maintenance and modification
+
+## Dependencies
+
+No external dependencies are used. The app is built using native SwiftUI and Combine
+
+## Tests
+
+Unit tests are included to verify the functionality of the ViewModel and network layer. Tests cover fetching trending movies, fetching movie details, and error handling

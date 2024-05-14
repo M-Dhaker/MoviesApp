@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct MoviesListView: View {
     @ObservedObject var viewModel: MoviesViewModel
     @EnvironmentObject var coordinator: MoviesCoordinator
@@ -22,19 +20,27 @@ struct MoviesListView: View {
                         .padding()
                 } else {
                     List(viewModel.trendingMovies, id: \.id) { movie in
-                        VStack(alignment: .leading) {
-                            Text(movie.title)
-                                .font(.headline)
+                        HStack(alignment: .top, spacing: 10) {
                             if let posterPath = movie.posterPath {
-                                AsyncImageView(url: URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)!)
+                                AsyncImageView(url: URL(string: Constants.Image.baseURL + posterPath)!)
                                     .frame(width: 100, height: 150)
+                                    .cornerRadius(8)
                             } else {
                                 Image(systemName: "photo")
                                     .resizable()
                                     .frame(width: 100, height: 150)
+                                    .cornerRadius(8)
                                     .foregroundColor(.gray)
                             }
+                            VStack(alignment: .leading) {
+                                Text(movie.title)
+                                    .font(.headline)
+                                Text(movie.releaseDate?.formattedYear ?? "")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
                         }
+                        .contentShape(Rectangle())
                         .onAppear {
                             if movie == viewModel.trendingMovies.last {
                                 viewModel.fetchTrendingMovies()

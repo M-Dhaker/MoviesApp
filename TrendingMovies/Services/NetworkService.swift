@@ -4,7 +4,6 @@
 //
 //  Created by Dhaker Trimech on 14/05/2024.
 //
-
 import Foundation
 import Combine
 
@@ -20,9 +19,7 @@ class NetworkService: NetworkServiceProtocol {
     // MARK: - Properties
     
     static let shared = NetworkService() // Singleton instance
-    private let baseURL = "https://api.themoviedb.org/3" // Base URL for the API
-    private let apiKey = "c9856d0cb57c3f14bf75bdc6c063b8f3" // API key for authentication
-    
+
     private init() {} // Private initializer to ensure singleton usage
     
     // MARK: - Network Methods
@@ -32,7 +29,7 @@ class NetworkService: NetworkServiceProtocol {
     /// - Returns: A publisher that outputs an array of TrendingMovie or an error
     func fetchTrendingMovies(page: Int) -> AnyPublisher<[TrendingMovie], Error> {
         // Construct the URL for the trending movies endpoint with pagination
-        guard let url = URL(string: "\(baseURL)/discover/movie?api_key=\(apiKey)&page=\(page)") else {
+        guard let url = URL(string: "\(Constants.API.baseURL)\(Constants.API.trendingMoviesEndpoint)?api_key=\(Constants.API.apiKey)&page=\(page)") else {
             fatalError("Invalid URL")
         }
         
@@ -49,7 +46,7 @@ class NetworkService: NetworkServiceProtocol {
     /// - Returns: A publisher that outputs a MovieDetail or an error
     func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieDetail, Error> {
         // Construct the URL for the movie details endpoint
-        guard let url = URL(string: "\(baseURL)/movie/\(movieId)?api_key=\(apiKey)") else {
+        guard let url = URL(string: "\(Constants.API.baseURL)\(Constants.API.movieDetailsEndpoint)\(movieId)?api_key=\(Constants.API.apiKey)") else {
             fatalError("Invalid URL")
         }
         
@@ -60,4 +57,3 @@ class NetworkService: NetworkServiceProtocol {
             .eraseToAnyPublisher()
     }
 }
-

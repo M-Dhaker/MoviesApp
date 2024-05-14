@@ -13,6 +13,7 @@ struct MovieDetail: Codable, Equatable {
     let title: String
     let overview: String
     let posterPath: String?
+    let releaseDate: String?
 
     // Coding keys to map JSON keys to Swift property names
     enum CodingKeys: String, CodingKey {
@@ -20,9 +21,11 @@ struct MovieDetail: Codable, Equatable {
         case title
         case overview
         case posterPath = "poster_path"
+        case releaseDate = "release_date"
     }
 
     static func == (lhs: MovieDetail, rhs: MovieDetail) -> Bool {
-        return lhs.id == rhs.id && lhs.title == rhs.title && lhs.overview == rhs.overview && lhs.posterPath == rhs.posterPath
+        return lhs.id == rhs.id && lhs.title == rhs.title && lhs.overview == rhs.overview && lhs.posterPath == rhs.posterPath && lhs.releaseDate == rhs.releaseDate
     }
 }
+
