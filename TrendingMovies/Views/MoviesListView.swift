@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @StateObject private var viewModel = MoviesViewModel()
+struct MoviesListView: View {
+    @ObservedObject var viewModel: MoviesViewModel
+    @EnvironmentObject var coordinator: MoviesCoordinator
 
     var body: some View {
         NavigationView {
@@ -21,6 +22,9 @@ struct ContentView: View {
                             .frame(width: 100, height: 150)
                     }
                 }
+                .onTapGesture {
+                    coordinator.showMovieDetails(movieId: movie.id)
+                }
             }
             .navigationTitle("trending_movies".localized)
             .onAppear {
@@ -31,12 +35,23 @@ struct ContentView: View {
                       message: Text(errorMessage),
                       dismissButton: .default(Text("ok".localized)))
             }
+            .background(
+                NavigationLink(
+                    destination: coordinator.movieDetailView(movieId: coordinator.selectedMovieId ?? 0),
+                    isActive: Binding<Bool>(
+                        get: { coordinator.selectedMovieId != nil },
+                        set: { _ in coordinator.selectedMovieId = nil }
+                    ),
+                    label: { EmptyView() }
+                )
+            )
         }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct MoviesListView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        MoviesListView(viewModel: MoviesViewModel())
+            .environmentObject(MoviesCoordinator())
     }
 }

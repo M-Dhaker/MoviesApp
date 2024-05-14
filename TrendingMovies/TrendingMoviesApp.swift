@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct TrendingMoviesApp: App {
+    @StateObject private var coordinator = MoviesCoordinator()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            coordinator.makeMoviesListView()
         }
     }
 }
