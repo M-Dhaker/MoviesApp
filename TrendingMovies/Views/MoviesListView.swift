@@ -16,7 +16,7 @@ struct MoviesListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if viewModel.isLoading {
+                if viewModel.isLoading && viewModel.trendingMovies.isEmpty {
                     ProgressView("Loading...".localized)
                         .progressViewStyle(CircularProgressViewStyle())
                         .padding()
@@ -33,6 +33,11 @@ struct MoviesListView: View {
                                     .resizable()
                                     .frame(width: 100, height: 150)
                                     .foregroundColor(.gray)
+                            }
+                        }
+                        .onAppear {
+                            if movie == viewModel.trendingMovies.last {
+                                viewModel.fetchTrendingMovies()
                             }
                         }
                         .onTapGesture {

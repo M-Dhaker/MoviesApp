@@ -10,7 +10,7 @@ import Combine
 
 /// Protocol defining the methods for fetching movies
 protocol NetworkServiceProtocol {
-    func fetchTrendingMovies() -> AnyPublisher<[TrendingMovie], Error>
+    func fetchTrendingMovies(page: Int) -> AnyPublisher<[TrendingMovie], Error>
     func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieDetail, Error>
 }
 
@@ -28,10 +28,11 @@ class NetworkService: NetworkServiceProtocol {
     // MARK: - Network Methods
     
     /// Fetches trending movies from the API
+    /// - Parameter page: The page number for pagination
     /// - Returns: A publisher that outputs an array of TrendingMovie or an error
-    func fetchTrendingMovies() -> AnyPublisher<[TrendingMovie], Error> {
-        // Construct the URL for the trending movies endpoint
-        guard let url = URL(string: "\(baseURL)/discover/movie?api_key=\(apiKey)") else {
+    func fetchTrendingMovies(page: Int) -> AnyPublisher<[TrendingMovie], Error> {
+        // Construct the URL for the trending movies endpoint with pagination
+        guard let url = URL(string: "\(baseURL)/discover/movie?api_key=\(apiKey)&page=\(page)") else {
             fatalError("Invalid URL")
         }
         
@@ -59,3 +60,4 @@ class NetworkService: NetworkServiceProtocol {
             .eraseToAnyPublisher()
     }
 }
+
