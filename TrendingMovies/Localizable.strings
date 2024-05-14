@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  TrendingMovies
+
+  Created by Dhaker Trimech on 14/05/2024.
+  
+*/
+
+"trending_movies" = "Trending Movies";
+"error" = "Error";
+"ok" = "OK";
+"fetch_trending_movies_error" = "Failed to fetch trending movies: ";
+"fetch_movie_details_error" = "Failed to fetch movie details: ";
